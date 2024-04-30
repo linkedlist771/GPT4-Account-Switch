@@ -2,12 +2,11 @@
 // @name         🚀🚀GPT4直连账号切换🚀🚀
 // @namespace    gpt4-account-switch
 // @version      0.0.1
-// @description  国科大自动评教脚本, 这个脚本可以帮助你一键生成评教内容。
+// @description  为GPT4直连账号切换提供便利
 // @author       LLinkedList771
 // @run-at       document-start
 
 // @match        https://gpt4.xn--fiqq6k90ovivepbxtg0bz10m.xyz/*
-// @match        https://*/*
 // @homepageURL  https://github.com/linkedlist771/UCAS-AutoClassEvaluation
 // @supportURL   https://github.com/linkedlist771/UCAS-AutoClassEvaluation/issues
 
