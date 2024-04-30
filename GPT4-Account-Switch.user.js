@@ -7,8 +7,8 @@
 // @run-at       document-start
 
 // @match        https://gpt4.xn--fiqq6k90ovivepbxtg0bz10m.xyz/*
-// @homepageURL  https://github.com/linkedlist771/UCAS-AutoClassEvaluation
-// @supportURL   https://github.com/linkedlist771/UCAS-AutoClassEvaluation/issues
+// @homepageURL  https://github.com/linkedlist771/GPT4-Account-Switch
+// @supportURL   https://github.com/linkedlist771/GPT4-Account-Switch/issues
 
 
 // @license      MIT
