@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         🚀🚀GPT4直连账号切换🚀🚀
 // @namespace    gpt4-account-switch
-// @version      0.0.1
+// @version      0.0.2
 // @description  为GPT4直连账号切换提供便利
 // @author       LLinkedList771
 // @run-at       document-start
@@ -37,6 +37,16 @@
                 z-index: 9999;
                 width: 250px;
             }
+            .tools-logger-panel.minimized {
+                width: auto;
+                padding: 5px;
+            }
+ 
+
+            .switch.minimized {
+                display: none;
+            }
+
             .head {
                 font-weight: bold;
                 margin-bottom: 10px;
@@ -62,6 +72,18 @@
                 font-color: red;
             }
 
+            .latex-toggle {
+                cursor: pointer;
+                float:right;
+                margin-right:5px;
+            }
+            .latex-toggle.minimized::before {
+                content: "[+]";
+            }
+            .latex-toggle.maximized::before {
+                content: "[-]";
+            }
+
         `;
         const styleSheet = document.createElement("style");
         styleSheet.type = "text/css";
@@ -76,9 +98,9 @@
     
         controlDiv.innerHTML = `
             <div class="head">
-                <span>GPT4账号切换助手</span>
-                <span class="close" style="float:right; cursor:pointer; margin-right:5px;">x</span>
-            </div>
+                <span class="title">GPT4账号切换助手</span>
+                <span class="latex-toggle maximized"></span>
+                </div>
             <div class="main">
                 <button id="loadAccountJsonBtn">导入账号信息</button>
             </div>
@@ -89,10 +111,35 @@
     
         document.body.appendChild(controlDiv);
     
-        controlDiv.querySelector(".close").onclick = function() {
-            controlDiv.remove();
+        // controlDiv.querySelector(".close").onclick = function() {
+        //     controlDiv.remove();
+        // };
+        
+        const toggleIcon = controlDiv.querySelector(".latex-toggle");
+        const title = controlDiv.querySelector(".title");
+        const switchDiv = controlDiv.querySelector(".switch");
+        toggleIcon.onclick = function() {
+            if (toggleIcon.classList.contains("maximized")) {
+                controlDiv.querySelector(".main").style.display = "none";
+                title.style.display = "none";
+                toggleIcon.classList.remove("maximized");
+                toggleIcon.classList.add("minimized");
+                controlDiv.classList.add("minimized");
+                switchDiv.classList.add("minimized");
+
+
+            } else {
+                controlDiv.querySelector(".main").style.display = "block";
+                title.style.display = "inline-block";
+                toggleIcon.classList.remove("minimized");
+                toggleIcon.classList.add("maximized");
+                controlDiv.classList.remove("minimized");
+                switchDiv.classList.remove("minimized");
+            }
+            saveSettings(controlDiv); // Save settings when panel state is changed
         };
     
+
         // 添加文件输入元素
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
@@ -127,6 +174,7 @@
             // 读取文件内容为文本
             reader.readAsText(file);
         });
+        loadSettings(controlDiv); // Load settings when panel is created
     }
    
     // 获取当前的url的(去掉路由) 
@@ -171,20 +219,6 @@
     }
 
 
-
-
-
-    // 这里我想获取当前点击的button的索引可以吗？ 然后
-    function switchAccount(accessToken)
-    {
-        // 首先登出当前账号
-        logOutCurrentAccount(accessToken);
-        // 然后登录新的账号
-        // 等三秒钟
-        console.log('Log out');
-
-    }
-
     function processAccountJsonData(jsonData) {
         // 首先存到localStorage
         localStorage.setItem('gpt4_account_json', JSON.stringify(jsonData));
@@ -211,6 +245,36 @@
         // 如果当前的accountData为空, 但是localStoraage也为空, 则提示当前需要加载账号信息
         alertLoadAccountData();
         return false;
+    }
+
+    // ----------------- Save and Load Settings -----------------
+function saveSettings(controlDiv) {
+    const panelState = controlDiv.classList.contains("minimized") ? "minimized" : "maximized";
+    localStorage.setItem('gpt4PanelState', panelState);
+    }
+    
+    function loadSettings(controlDiv) {
+    const panelState = localStorage.getItem('gpt4PanelState');
+    
+    const toggleIcon = controlDiv.querySelector(".latex-toggle");
+    const title = controlDiv.querySelector(".title");
+    const switchDiv = controlDiv.querySelector(".switch");
+
+    if (panelState === "minimized") {
+    controlDiv.querySelector(".main").style.display = "none";
+    title.style.display = "none";
+    toggleIcon.classList.remove("maximized");
+    toggleIcon.classList.add("minimized");
+    controlDiv.classList.add("minimized");
+    switchDiv.classList.add("minimized");
+    } else {
+    controlDiv.querySelector(".main").style.display = "block";
+    title.style.display = "inline-block";
+    toggleIcon.classList.remove("minimized");
+    toggleIcon.classList.add("maximized");
+    controlDiv.classList.remove("minimized");
+    switchDiv.classList.remove("minimized");
+    }
     }
 
     function creatSwitchBtnUI() {
@@ -285,7 +349,10 @@
        createUI();
        loadAndCreateAccountSwitchBtnUI(); // Ensure the switch buttons are created after UI is loaded and data is retrieved
 
-   });
+   })
+   
+   ;
+   
 
 
 })();
