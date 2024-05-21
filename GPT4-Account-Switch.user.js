@@ -1,12 +1,13 @@
 // ==UserScript==
 // @name         🚀🚀GPT4直连账号切换🚀🚀
 // @namespace    gpt4-account-switch
-// @version      0.0.2
+// @version      0.0.3
 // @description  为GPT4直连账号切换提供便利
 // @author       LLinkedList771
 // @run-at       document-start
 
 // @match        https://gpt4.xn--fiqq6k90ovivepbxtg0bz10m.xyz/*
+// @match        https://chat.freegpts.org/*
 // @homepageURL  https://github.com/linkedlist771/GPT4-Account-Switch
 // @supportURL   https://github.com/linkedlist771/GPT4-Account-Switch/issues
 
@@ -21,6 +22,8 @@
     function setAccountData(data) {
         accountData = data;
     }
+
+  
 
     // ----------------- Styles -----------------
     function addStyles() {
@@ -197,24 +200,36 @@
         window.location.href = logoutURL;
     }
 
-    function logInNewAccount(accessToken) {
-        var loginBtn = document.querySelector('#submit-token');
+    function logInNewAccount(userName, passWork) {
+        // var loginBtn = document.querySelector('#submit');
+        // if(loginBtn) {
+        //     loginBtn.click();
+        // }
+        // 第一个输入id="username" 填入userName
+        var userNameArea = document.getElementById('username');
+        if(userNameArea) {
+            userNameArea.value = userName; // 将 '你的用户名' 替换为你想要输入的内容        
+        }
+
+        // 第二个输入id="password" 填入passWork
+        var passWordArea = document.getElementById('password');
+        if(passWordArea) {
+            passWordArea.value = passWork; // 将 '你的密码' 替换为你想要输入的内容        
+        }
+
+        // 找到登录按钮
+        var loginBtn = document.querySelector('button[type="submit"]');
         if(loginBtn) {
             loginBtn.click();
         }
-        // 找到textarea的第一个textarea 填入accessToken
-        var textArea = document.querySelector('textarea');
-        if(textArea) {
-            textArea.value = accessToken;
-        }
-        // 找到button里面的值（innerHtml)为OK的按钮
-        var okBtn = Array.from(document.querySelectorAll('button')).find(function(btn) {
-            return btn.innerText.trim() === 'OK';
-        });
+        // // 找到button里面的值（innerHtml)为OK的按钮
+        // var okBtn = Array.from(document.querySelectorAll('button')).find(function(btn) {
+        //     return btn.innerText.trim() === 'OK';
+        // });
     
-        if(okBtn) {
-            okBtn.click();
-        }
+        // if(okBtn) {
+        //     okBtn.click();
+        // }
 
     }
 
@@ -316,7 +331,7 @@ function saveSettings(controlDiv) {
             button.onclick = () => {
                 // Logic to switch accounts
                 // setAccountData(accountData[key]);
-                logInNewAccount(accountData[key]);
+                logInNewAccount(key, accountData[key]);
                 console.log('Switched to account:', accountData[key]);
                 
             };
