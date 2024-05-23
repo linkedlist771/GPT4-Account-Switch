@@ -39,6 +39,7 @@
                 box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
                 z-index: 9999;
                 width: 250px;
+                
             }
             .tools-logger-panel.minimized {
                 width: auto;
@@ -67,13 +68,26 @@
                 text-decoration: underline;
 
             }
+           .account-container {
+                display: flex;
+                flex-direction: column; 
+                align-items: center; 
+                margin-bottom: 10px; 
+            }
+
             .account-btn {
                 padding: 5px 10px;
-                margin: 5px 0;
-                background-color: #f0f0f0;  
-                font-weight: bold; 
-                font-color: red;
+                margin: 2px 0; 
+                background-color: #f0f0f0;
+                font-weight: bold;
             }
+           
+            .email-display {
+                font-size: 0.8em; 
+                color: #666; 
+                margin-top: 2px; 
+            }
+
 
             .latex-toggle {
                 cursor: pointer;
@@ -235,11 +249,22 @@
 
 
     function processAccountJsonData(jsonData) {
-        // 首先存到localStorage
-        localStorage.setItem('gpt4_account_json', JSON.stringify(jsonData));
-        setAccountData(jsonData);
-        // 创建切换账号按钮
-        creatSwitchBtnUI(); // 确保此时已经有有效的accountData来创建按钮
+
+       
+
+        // 检查所有键是否都是有效的电子邮件
+        const allKeysAreValid = Object.keys(jsonData).every(isValidEmail);
+
+        if (allKeysAreValid) {
+            clearPreviousAccountData(); // 调用清理函数
+            localStorage.setItem('gpt4_account_json', JSON.stringify(jsonData));
+            setAccountData(jsonData);
+            creatSwitchBtnUI(); // 确保此时已经有有效的accountData来创建按钮
+        } else {
+            alert('Some entries are invalid. Please check the data.');
+        }
+
+
     }
     function alertLoadAccountData() {
         alert('请先导入账号信息');
@@ -297,14 +322,14 @@ function saveSettings(controlDiv) {
         if (!controlDiv) return;
         let button = document.createElement('button');
         button.className = 'account-btn';
-    
+
         button.textContent = `登出账号`;
         button.onclick = () => {
             // Logic to switch accounts
             // setAccountData(accountData[key]);
             logOutCurrentAccount();
             console.log('Switched to account:', accountData[key]);
-            
+
         };
         controlDiv.appendChild(button);
         //                 redirectToBaseUrl();
@@ -318,30 +343,37 @@ function saveSettings(controlDiv) {
             // setAccountData(accountData[key]);
             redirectToBaseUrl();
             console.log('Switched to account:', accountData[key]);
-            
+
         };
         controlDiv.appendChild(button);
+        Object.keys(accountData).forEach((email, index) => {
+            // 创建包含按钮和电子邮件地址的容器
+            const container = document.createElement('div');
+            container.className = 'account-container';
 
-
-        Object.keys(accountData).forEach((key, index) => {
+            // 创建登录按钮
             const button = document.createElement('button');
             button.className = 'account-btn';
-    
             button.textContent = `登录账号${index + 1}`;
             button.onclick = () => {
-                // Logic to switch accounts
-                // setAccountData(accountData[key]);
-                logInNewAccount(key, accountData[key]);
-                console.log('Switched to account:', accountData[key]);
-                
+                logInNewAccount(email, accountData[email]);
+                console.log('Switched to account:', email);
             };
-            controlDiv.appendChild(button);
 
-        
+            // 创建显示电子邮件地址的元素
+            const emailDisplay = document.createElement('span');
+            emailDisplay.className = 'email-display';
+            emailDisplay.textContent = email;
 
-            
+            // 将按钮和电子邮件地址添加到容器
+            container.appendChild(button);
+            container.appendChild(emailDisplay);
+
+            // 将容器添加到主DIV
+            controlDiv.appendChild(container);
         });
     }
+
 
     function loadAndCreateAccountSwitchBtnUI(){
         // 首先判断localStorage中是否有数据
@@ -371,3 +403,24 @@ function saveSettings(controlDiv) {
 
 
 })();
+
+function clearPreviousAccountData() {
+    // 清除内存中的账号数据
+    accountData = null;
+   
+    localStorage.removeItem('gpt4_account_json');
+
+   
+    const switchDiv = document.querySelector('.tools-logger-panel .switch');
+    if (switchDiv) {
+    
+        while (switchDiv.firstChild) {
+            switchDiv.removeChild(switchDiv.firstChild);
+        }
+    }
+}
+function isValidEmail(email) {
+    // 使用正则表达式验证电子邮件地址
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
