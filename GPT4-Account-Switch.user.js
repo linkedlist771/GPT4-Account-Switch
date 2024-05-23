@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         🚀🚀GPT4直连账号切换🚀🚀
 // @namespace    gpt4-account-switch
-// @version      0.0.3
+// @version      0.0.4
 // @description  为GPT4直连账号切换提供便利
 // @author       LLinkedList771
 // @run-at       document-start
